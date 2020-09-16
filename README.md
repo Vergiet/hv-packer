@@ -1,11 +1,11 @@
-# Set of packer templates to create Microft Hyper-V virtual machines
+# Set of packer scripts to create Hyper-V VMs
 
 ## Requirements
 
-* packer <=`1.6.0`. Do not use packer below 1.6.0. For previous packer versions use previous releases from this repository
+* packer <=`1.5.4`. Do not use packer below 1.5.1. For previous packer versions use previous releases from this repository
 * Microsoft Hyper-V Server 2016/2019 or Microsoft Windows Server 2016/2019 (not 2012/R2) with Hyper-V role installed as host to build your images
 * firewall exceptions for `packer` http server (look down below)
-* [OPTIONAL] Vagrant >= `2.2.9` - for `vagrant` version of scripts. Boxes (prebuilt) are already available here: [https://app.vagrantup.com/marcinbojko](https://app.vagrantup.com/marcinbojko)
+* [OPTIONAL] Vagrant >= `2.2.5` - for `vagrant` version of scripts. Boxes (prebuilt) are already available here: [https://app.vagrantup.com/marcinbojko](https://app.vagrantup.com/marcinbojko)
 * be aware, for 2016 - VMs are in version 8.0, for 2019 - VMs are in version 9.0. There is no way to reuse higher version in previous operating system. If you need v8.0 - build and use only VHDX.
 
 ## Usage
@@ -13,7 +13,7 @@
 ### Install packer from Chocolatey
 
 ```cmd
-choco install packer --version=1.6.0 -y
+choco install packer --version=1.5.5 -y
 ```
 
 ### Add firewal exclusions for TCP ports 8000-9000 (default range)
@@ -42,31 +42,12 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
 
   |Package|Version|
   |-------|-------|
+  |puppet-agent|5.5.19|
   |conemu|latest|
   |dotnetfx|latest|
   |sysinternals|latest|
-
 * latest Nuget poweshell module
-* `phase3.ps1` Puppet agent settings will be customized (`server=foreman.spcph.local`) with parameters:
-  * `Version` - puppet chocolatey version, for example "5.5.20"
-  * `AddPrivateChoco` ($true/$false) - if set to true, private MyGet repository will be added as `public`
-  * `PuppetMaster` (foreman.spcph.local) - if set, in `puppet.conf` section server will point to that variable
-
-  Example of usage:
-
-  `.\phase3.ps1 -Version 5.5.20 -AddPrivateChoco $true -PuppetMaster foreman.example.com`
-
-  Puppet is set to clear any temp SSL keys and to be stopped after generalize phase
-
-* `phase5b-docker.ps1` - Docker settings can be customised
-  * `requiredVersion` - which version of docker module to install - defaults to 19.03.1
-  * `installCompose` ($true/$false) - install docker-compose from chocolatey packages
-  * `dockerLocation` - of set, will default docker images and settings there. On empty, docker location is not being set.
-  * `configDockerLocation` - default place for docker's config file
-
-  Example of usage
-
-  `.\phase5b-docker.ps1 -requiredVersion "19.03.1" -installCompose $true -dockerLocation "d:\docker" -configDockerLocation "C:\ProgramData\Docker\config"`
+* puppet agent settings will be customized (`server=foreman.spcph.local`). Please adjust it (`/extra/scripts/phase-3.ps1`) to suit your needs. Puppet is set to be cleared and stopped after generalize phase
 
 ### Linux Machines
 
@@ -85,7 +66,9 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
 * [Optional] Linux machine with separated disk for docker
 * [Optional] Linux machine for vagrant
 
-  Be aware, turning off latest System Center Virtual Machine Agent will cause System Center fail to deploy machines
+Be aware, turning off latest System Center Virtual Machine Agent will cause System Center fail to deploy machines
+
+### Info
 
 * adjust `/files/provision.sh` to modify package's versions/servers.
 * change `"provision_script_options"` variable to:
@@ -95,12 +78,11 @@ New-NetFirewallRule -DisplayName "Packer_http_server" -Direction Inbound -Action
   * -u (true/false) - switch yum update all on/off (usable when creating previous than `latest` version of OS)
   * -z (true/false) - switch Zabbix-agent installation
   * -c (true/false) - switch Cockpit installation (CentOS8 only)
+Example:
 
-  Example:
-
-  ```json
-  "provision_script_options": "-p false -u true -w true -h false -z false"
-   ```
+```json
+"provision_script_options": "-p false -u true -w true -h false -z false"
+```
 
 * `prepare_neofetch.sh` -  default banner during after the login - change required fields you'd like to see in `provision.sh`
 
@@ -174,7 +156,7 @@ This template uses this image name in Autounattendes.xml. If youre using differe
 </InstallFrom>
 ```
 
-## Templates Windows Server
+## Windows Server Images
 
 ### Hyper-V Generation 2 Windows Server 1903 Standard Image
 
@@ -248,6 +230,8 @@ Run `hv_centos77_docker.ps1`
 Experimental support for vagrant machines `hv_centos78_vagrant.ps1` for CentOS 7.8
 Experimental support for vagrant machines `hv_centos77_vagrant.ps1` for CentOS 7.7
 
+
+
 ## Known issues
 
 ### I have general problem not covered here
@@ -260,7 +244,7 @@ Sure. If I can ask - create your PR in smaller sizes, this is repo used for my w
 
 ### Infamous UEFI/Secure boot WIndows implementation
 
-During the deployment secure keys are stored in `*.vmcx` file and are separated from `*.vhdx` file. To countermeasure it - there is added extra step in a form of (`/usr/local/bin/uefi.sh`) script that will check for existence of CentOS folder in EFI and will add extra entry in UEFI.
+During the deployment secure keys are stored in *.vmcx file and are separated from *.vhdx file. To countermeasure it - there is added extra step in a form of (`/usr/local/bin/uefi.sh`) script that will check for existence of CentOS folder in EFI and will add extra entry in UEFI.
 In manual setup you can run it as a part of your deploy. In SCVMM deployment I'd recommend using `RunOnce` feature.
 
 ### ~~On Windows Server 2019/Windows 10 1809 image boots to fast for packer to react~~

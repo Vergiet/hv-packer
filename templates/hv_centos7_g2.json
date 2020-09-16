@@ -5,7 +5,7 @@
       "vm_name": "{{ user `vm_name` }}",
       "temp_path": ".",
       "iso_url": "{{ user `iso_url` }}",
-      "iso_checksum": "{{user `iso_checksum_type`}}:{{user `iso_checksum`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
       "disk_size": "{{user `disk_size`}}",
       "disk_block_size": "1",
       "communicator": "ssh",
@@ -30,11 +30,23 @@
       "output_directory": "{{ user `output_directory` }}"
     }
   ],
-  "provisioners": [
+  "provisioners": [    {
+    "execute_command": "mkdir /root/.ssh",
+    "inline": [
+      "mkdir /root/.ssh"
+      ],
+   "inline_shebang": "/bin/sh -x",
+   "type": "shell"
+   },
     {
       "type": "file",
       "source": "extra/files/gen2-centos/webmin.repo",
       "destination": "/tmp/webmin.repo"
+    },
+    {
+      "type": "file",
+      "source": "extra/files/gen2-centos/authorized_keys",
+      "destination": "/root/.ssh/authorized_keys"
     },
     {
       "type": "file",
@@ -112,7 +124,6 @@
   ],
   "variables": {
     "iso_url":  "",
-    "iso_checksum_type": "none",
     "iso_checksum": "",
     "switch_name": "",
     "vm_name": "",

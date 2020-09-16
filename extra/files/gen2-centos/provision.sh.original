@@ -1,9 +1,9 @@
 #!/bin/bash
 INSTALL_UPDATES=true
-INSTALL_PUPPET=false
-INSTALL_HYPERV=false
-INSTALL_WEBMIN=false
-INSTALL_ZABBIX=false
+INSTALL_PUPPET=true
+INSTALL_HYPERV=true
+INSTALL_WEBMIN=true
+INSTALL_ZABBIX=true
 STAMP_FILE="/etc/packerinfo"
 
 usage() { echo "Usage: $0 [-u <true|false> INSTALL_UPDATES ] [-p <true|false> INSTALL_PUPPET] [-w <true|false> INSTALL_WEBMIN] [-h <true|false> INSTALL_HYPERV] " 1>&2; }

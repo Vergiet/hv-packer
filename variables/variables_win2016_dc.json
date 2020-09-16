@@ -1,0 +1,18 @@
+{
+  "iso_url": "D:\\Images\\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO",
+  "iso_checksum_type": "sha256",
+  "iso_checksum": "1CE702A578A3CB1AC3D14873980838590F06D5B7101C5DAACCBAC9D73F1FB50F",
+  "switch_name": "Default Switch",
+  "vlan_id": "",
+  "vm_name": "packer-windows2016-g2",
+  "disk_size": "131050",
+  "output_directory": "output-windows-2016-dc-g2",
+  "secondary_iso_image": "./extra/files/gen2-2016/dc/secondary.iso",
+  "output_vagrant": "./vbox/packer-windows-2016-std-g2.box",
+  "vagrantfile_template": "./vagrant/hv_win2016_std.template",
+  "sysprep_unattended": "./extra/files/gen2-2016/dc/unattend.xml",
+  "vagrant_sysprep_unattended": "./extra/files/gen2-2016/dc/unattend_vagrant.xml",
+  "upgrade_timeout": "240"
+}
+
+

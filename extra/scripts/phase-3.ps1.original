@@ -10,7 +10,7 @@ Write-Output "Start of Phase 3"
     try {
         choco source add -n=public -s"https://www.myget.org/F/public-choco" --priority=10
         # install puppet/stop/clean
-        choco install puppet-agent --version $puppet_version -ia '"PUPPET_MASTER_SERVER=PMoM01.vrgt.xyz"' -y --no-progress
+        choco install puppet-agent --version $puppet_version -ia '"PUPPET_MASTER_SERVER=foreman.spcph.local"' -y --no-progress
     }
     catch {
         Write-Output "Phase 3 - Install source or install puppet-agent failed"
